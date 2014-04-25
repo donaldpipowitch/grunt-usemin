@@ -23,16 +23,16 @@ npm install grunt-usemin --save-dev
 In addition, `useminPrepare` dynamically generates the configuration for `concat`, `uglify`, and `cssmin`.
 **Important**: _you still need to manually manage these dependencies and call each task_.
 
-Usually, `useminPrepare` is launched first, then the steps of the transformation flow (e.g. `concat`, `uglify`, and `cssmin`), and then, in the end `usemin` is launched. For example:
+Usually, `useminPrepare` is launched first, then the steps of the transformation flow (e.g. the `generated` subtasks of `concat`, `uglify`, and `cssmin`), and then, in the end `usemin` is launched. For example:
 
 ```js
 // simple build task
 grunt.registerTask('build', [
   'useminPrepare',
-  'concat',
-  'cssmin',
-  'uglify',
-  'rev',
+  'concat:generated',
+  'cssmin:generated',
+  'uglify:generated',
+  'filerev',
   'usemin'
 ]);
 ```
@@ -87,17 +87,20 @@ The produced configuration will look like:
 
 ```js
 {
-  concat: {
-    '.tmp/concat/js/app.js': [
-      'app/js/app.js',
-      'app/js/controllers/thing-controller.js',
-      'app/js/models/thing-model.js',
-      'app/js/views/thing-view.js'
-    ]
-  },
-  uglifyjs: {
-    'dist/js/app.js': ['.tmp/concat/js/app.js']
-  }
+  concat:
+    generated: 
+     { files: 
+        [ { dest: '.tmp/concat/js/app.js',
+            src: 
+             [ 'app/js/app.js',
+               'app/js/controllers/thing-controller.js',
+               'app/js/models/thing-model.js',
+               'app/js/views/thing-view.js' ] } ] } }
+  uglify:
+    { generated: 
+      { files: 
+        [ { dest:  'dist/js/app.js',
+            src: [ '.tmp/concat/js/app.js' ] } ] } }
 }
 ```
 
