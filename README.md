@@ -88,19 +88,30 @@ The produced configuration will look like:
 ```js
 {
   concat:
-    generated: 
-     { files: 
-        [ { dest: '.tmp/concat/js/app.js',
-            src: 
-             [ 'app/js/app.js',
-               'app/js/controllers/thing-controller.js',
-               'app/js/models/thing-model.js',
-               'app/js/views/thing-view.js' ] } ] } }
-  uglify:
-    { generated: 
-      { files: 
-        [ { dest:  'dist/js/app.js',
-            src: [ '.tmp/concat/js/app.js' ] } ] } }
+    generated: {
+      files: [
+        {
+          dest: '.tmp/concat/js/app.js',
+          src: [
+            'app/js/app.js',
+            'app/js/controllers/thing-controller.js',
+            'app/js/models/thing-model.js',
+            'app/js/views/thing-view.js'
+          ]
+        }
+      ]
+    }
+  },
+  uglify: {
+    generated: {
+      files: [
+        {
+          dest: 'dist/js/app.js',
+          src: [ '.tmp/concat/js/app.js' ]
+        }
+      ]
+    }
+  }
 }
 ```
 
