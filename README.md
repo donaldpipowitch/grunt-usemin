@@ -2,7 +2,8 @@
 
 > Replaces references from non-optimized scripts, stylesheets and other assets to their optimized version within a set of HTML files (or any templates/views).
 
-Watch out, this task is designed for Grunt 0.4 and upwards.
+**[Maintainer wanted](https://github.com/yeoman/grunt-usemin/issues/313)**
+
 
 ## Getting Started
 If you haven't used [grunt][] before, be sure to check out the [Getting Started][] guide, as it explains how to create a [gruntfile][Getting Started] as well as install and use grunt plugins. Once you're familiar with that process, install this plugin with this command:
@@ -58,7 +59,8 @@ Blocks are expressed as:
 <!-- endbuild -->
 ```
 
-* **type**: either `js` or `css`
+* **type**: can be `js`, `css` or a custom type with a [block replacement function](#blockreplacements) defined
+ * If another type, the block will be ignored.  Useful for "development only" blocks that won't appear in your build
 * **alternate search path**: (optional) By default the input files are relative to the treated file. Alternate search path allows one to change that
 * **path**: the file path of the optimized file, the target output
 
@@ -156,28 +158,28 @@ useminPrepare: {
 
 ### dest
 
-Type: 'string' <br/>
+Type: 'string'  
 Default: `nil`
 
 Base directory where the transformed files should be output.
 
 ### staging
 
-Type: 'string' <br/>
+Type: 'string'  
 Default: `.tmp`
 
 Base directory where the temporary files should be output (e.g. concatenated files).
 
 ### root
 
-Type: 'string' or 'Array' <br/>
-Default: `nil` <br/>
+Type: 'string' or 'Array'  
+Default: `nil`
 
 The root directory from which your files will be resolved.
 
 ### flow
 
-Type: 'object' <br/>
+Type: 'object'  
 Default: `{ steps: { js: ['concat', 'uglifyjs'], css: ['concat', 'cssmin'] }, post: {} }`
 
 This allow you to configure the workflow, either on a per-target basis, or for all the targets.
@@ -347,7 +349,7 @@ By default `usemin` will look under `dist/html` for revved versions of `styles/m
 
 #### assetsDirs
 
-Type: 'Array'
+Type: 'Array'  
 Default: Single item array set to the value of the directory where the currently looked at file is.
 
 List of directories where we should start to look for revved version of the assets referenced in the currently looked at file.
@@ -364,7 +366,7 @@ usemin: {
 
 #### patterns
 
-Type: 'Object'
+Type: 'Object'  
 Default: Empty
 
 Allows for user defined pattern to replace reference to files. For example, let's suppose that you want to replace
@@ -395,12 +397,39 @@ So in short:
     * FIXME
     * FIXME
 
+#### blockReplacements
+
+Type: 'Object'  
+Default: `{ css: function (block) { ... }, js: function (block) { ... } }`
+
+This lets you define how blocks get their content replaced. Useful to have block types other that `css` and `js`.
+
+* Object key matches a block type
+* Value is the replacement function for that block type.
+  * The replacement function gets called with a single argument: a [block](#block) object.
+  * Must return a `String`, the "summary" line that will replace the block content.
+
+For example, to create a `less` block you could define its replacement function like this:
+
+```js
+usemin: {
+  html: index.html,
+  options: {
+    blockReplacements: {
+      less: function (block) {
+          return '<link rel="stylesheet" href="' + block.dest + '">';
+      }
+    }
+  }
+}
+```
+
 #### revmap
 
-Type: 'String'
+Type: 'String'  
 Default: Empty
 
-Indicate the location of a map file, as produced by `grunt-rev` for example. This map file is a simple JSON file, holding an object
+Indicate the location of a map file, as produced by `grunt-filerev` for example. This map file is a simple JSON file, holding an object
 which attributes are the original file and associated value is the transformed file. For example:
 
 ```js
